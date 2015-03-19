@@ -81,9 +81,6 @@ document.getElementById('fxosactivate').addEventListener('click', function() {
     document.getElementById('connected').innerHTML = (fxosu.connectionUp() == true ? 'Yes' : 'No');
     document.getElementById('latency').innerHTML = netlat.networkLatency;
     document.getElementById('ctype').innerHTML = fxosu.connectionType();
-    document.getElementById('rx').innerHTML = nsinfo.rx;
-    document.getElementById('tx').innerHTML = nsinfo.tx;
-
     document.getElementById('high').innerHTML = fxosu.mozIsNowGood(1);
     document.getElementById('mod').innerHTML = fxosu.mozIsNowGood(2);
     document.getElementById('low').innerHTML = fxosu.mozIsNowGood(3);
