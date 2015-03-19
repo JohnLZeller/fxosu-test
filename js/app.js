@@ -72,16 +72,17 @@ document.getElementById('test').addEventListener('click', function() {
 document.getElementById('fxosactivate').addEventListener('click', function() {
   if ('mozFxOSUService' in navigator) {
     var fxosu = navigator.mozFxOSUService;
+    var netlat = fxosu.showLatency();
     document.getElementById('batlevel').innerHTML = fxosu.batteryLevel() * 100 + "%";
     document.getElementById('batcharge').innerHTML = (fxosu.batteryCharging() == true ? 'Yes' : 'No');
     if (fxosu.batteryLevel() == 1) {
       document.getElementById('batcharge').innerHTML += " (battery is 100%, so might be charging)";
     }
     document.getElementById('connected').innerHTML = (fxosu.connectionUp() == true ? 'Yes' : 'No');
-    document.getElementById('latency').innerHTML = fxosu.getLatency();
+    document.getElementById('latency').innerHTML = netlat.networkLatency;
     document.getElementById('ctype').innerHTML = fxosu.connectionType();
-    // document.getElementById('rx').innerHTML = nsinfo.rx;
-    // document.getElementById('tx').innerHTML = nsinfo.tx;
+    document.getElementById('rx').innerHTML = nsinfo.rx;
+    document.getElementById('tx').innerHTML = nsinfo.tx;
 
     document.getElementById('high').innerHTML = fxosu.mozIsNowGood(1);
     document.getElementById('mod').innerHTML = fxosu.mozIsNowGood(2);
