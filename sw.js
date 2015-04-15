@@ -5,7 +5,7 @@
   /* global caches */
   /* global fetch */
   /* global URL */
-  importScripts("js/serviceworker-cache-polyfill.js");
+  importScripts("javascripts/serviceworker-cache-polyfill.js");
 
   self.addEventListener('install', function(event) {
     console.log("ServiecWorker installed");
