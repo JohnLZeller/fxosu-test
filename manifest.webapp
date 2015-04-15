@@ -1,7 +1,7 @@
 {
   "version": "0.2.0",
   "name": "fxosutest",
-  "description": "Demonstrates how to use permissions to load remote content",
+  "description": "Test app of FxOSUService API",
   "launch_path": "/index.html",
   "icons": {
     "16": "/img/icons/icon16x16.png",
@@ -10,8 +10,8 @@
     "128": "/img/icons/icon128x128.png"
   },
   "developer": {
-    "name": "Your name",
-    "url": "https://ivantjiam.github.io/Draft/"
+    "name": "Pok Yan Tjiam",
+    "url": "https://ivantjiam.github.io/fxosu-test/"
   },
   "type": "certified",
   "permissions": {
@@ -21,17 +21,5 @@
   },
   "installs_allowed_from": [
     "*"
-  ],
-  "locales": {
-    "es": {
-      "name": "Aplicación privilegiada",
-      "description": "Demuestra cómo utilizar permisos para cargar contenido remoto",
-      "permissions": {
-        "systemXHR": {
-          "description": "Requerido para cargar contenido remoto"
-        }
-      }
-    }
-  },
-  "default_locale": "en"
+  ]
 }
