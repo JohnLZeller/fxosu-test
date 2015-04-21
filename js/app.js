@@ -26,7 +26,11 @@ if ('serviceWorker' in navigator) {
 document.getElementById('swreqtest').addEventListener('click', swreqTest);
 // document.getElementById('Data').addEventListener('click', bmTest());
 document.getElementById('bm').addEventListener('click', bmTest);
+<<<<<<< HEAD
 document.getElementById('fxosutest').addEventListener('click', fxosuTest);
+=======
+document.getElementById('fxosuactivate').addEventListener('click', fxosuactivate);
+>>>>>>> origin/master
 
 function log(msg) {
   var el = document.createElement('div');
@@ -68,7 +72,11 @@ function swreqTest() {
   }
 }
 
+<<<<<<< HEAD
 function fxosuTest() {
+=======
+function fxosuactivate() {
+>>>>>>> origin/master
   if ('mozFxOSUService' in navigator) {
     var fxosu = navigator.mozFxOSUService;
     var netlat = fxosu.showLatency();
@@ -89,13 +97,17 @@ function fxosuTest() {
 }
 
 function bmTest() {
+<<<<<<< HEAD
   // performance goal: CPU, memory, battery, network activities
   // constraints: 5 apps, 10 requests
 
+=======
+>>>>>>> origin/master
   // var p = document.createElement("P");
   // var c = document.createTextNode("This is a paragraph.");
   // p.appendChild(c);
   // document.getElementById("benchmark").appendChild(p);
+<<<<<<< HEAD
   var start = performance.now();
   var result = runBenchmark()
   var end = performance.now();
@@ -115,3 +127,8 @@ function runBenchmark() {
   
   return result
 }
+=======
+  var content = "Content";
+  document.getElementById("bmcontent").innerHTML = content;
+}
+>>>>>>> origin/master
