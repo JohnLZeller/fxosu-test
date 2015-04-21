@@ -30,6 +30,7 @@
     -->
     <script type="text/javascript" src="js/app.js" defer></script>
     <script type="text/javascript" src="js/reqsync.js" defer></script>
+    <script type="text/javascript" src="js/tabcontent.js" defer></script>
 
     <!--
     The following two lines are for loading the localisations library
@@ -40,92 +41,90 @@
     <script type="text/javascript" src="js/libs/l10n.js" defer></script>
   </head>
   <body>
-    <!--section>
-      <h1 data-l10n-id="app_title">Privileged app</h1>
-      <p data-l10n-id="app_description">This app demonstrates the usage of <code>XMLHttpRequest</code> and the <code>systemXHR</code> permission.</p>
-      <p id="error" hidden>...</p>
-      <form>
-        <input type="search" placeholder="javascript" id="term" /><button id="search" data-l10n-id="search">Search</button>
-      </form>
-    </section>
-    <section id="results" hidden></section-->
-    <section>
-      <div style="max-width: 700px; margin: 0 auto 0 auto;">
-      <div id="js-log" style="height: 200px; overflow: scroll; color: white; background: black; font-family: monospace; line-height: 150%; font-size: 12px; padding: 7px;"></div>
+    <div style="max-width: 700px; margin: 0 auto 0 auto;">
+      <div id="header">
+        <h2 data-l10n-id="app_title">FxOSUService Test App</h2>
+        <p data-l10n-id="app_description"></p>
       </div>
-    </section>
-    <section>
-      <div style="max-width: 700px; margin: 0 auto 0 auto;">
-        <p><h1>Service Worker and RequestSync test</h1></p>
-        <p>
-        <table>
-        <tr>
-          <th style="text-align: left;">Service worker: </th>
-          <td><button id="swinstall">Start</button></td>
-        </tr>
-        <tr>
-          <th style="text-align: left;">RequestSync: </th>
-          <td><button id="reglist">List</button></td>
-          <td><button id="regsync">Register</button></td>
-          <td><button id="unregsync">Unregister</button></td>
-        </tr>
-        <tr>
-          <th style="text-align: left;">Other: </th>
-          <td><button id="test">Test</button></td>
-        </tr>
-        </table>
-        <p>
+      <ul class="tabs" data-persist="true">
+        <li><a href="#swreq">SW RS Test</a></li>
+        <li><a href="#benchmark">Benchmark</a></li>
+        <li><a href="#fxosuservice">API</a></li>
+      </ul>
+      <div class="tabcontents">
+        <div id="swreq">
+          <h3>Service Worker and RequestSync test</h3>
+          <div id="js-log" style="height: 200px; overflow: scroll; color: white; background: black; font-family: monospace; line-height: 150%; font-size: 12px; padding: 7px;"></div><br />
+          <table>
+          <tr>
+            <th style="text-align: left;">Service worker: </th>
+            <td><button id="swinstall">install</button></td>
+          </tr>
+          <tr>
+            <th style="text-align: left;">Test: </th>
+            <td><button id="swreqtest">Start</button></td>
+          </tr>
+          <tr>
+            <th style="text-align: left;">RequestSync: </th>
+            <td><button id="data">Data</button></td>
+          </tr>
+          </table>
+        </div>
+        <div id="benchmark">
+          <h3>FxOSUService Benchmark</h3>
+          <p>The test app for the API should benchmark device resource usage, contrasting use with the API and use without the API</p>
+          <button id="bm">Start</button>
+          <p id="bmcontent"></p>
+        </div>    
+        <div id="fxosuservice">
+          <p><h3>API test</h3></p>
+          <button id="fxosutest">Test</button>
+          <p>
+          <table>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Battery Level: </th>
+            <td style="margin: 5px;" id="batlevel"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Battery Charging: </th>
+            <td style="margin: 5px;" id="batcharge"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Connected to Internet: </th>
+            <td style="margin: 5px;" id="connected"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Latency: </th>
+            <td style="margin: 5px;" id="latency"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Connection type: </th>
+            <td style="margin: 5px;" id="ctype"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Data received: </th>
+            <td style="margin: 5px;" id="rx"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Data transferred: </th>
+            <td style="margin: 5px;" id="tx"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">High Certainty: </th>
+            <td style="margin: 5px;" id="high"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Moderate Certainty: </th>
+            <td style="margin: 5px;" id="mod"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Low Certainty: </th>
+            <td style="margin: 5px;" id="low"></td>
+          </tr>
+          </table>
+          </p>
+        </div>
       </div>
-    </section>
-    <section>
-      <div style="max-width: 700px; margin: 0 auto 0 auto;">
-        <p><h1>API test</h1></p>
-        <button id="fxosactivate">Activate</button>
-        <p>
-        <table>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Battery Level: </th>
-          <td style="margin: 5px;" id="batlevel"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Battery Charging: </th>
-          <td style="margin: 5px;" id="batcharge"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Connected to Internet: </th>
-          <td style="margin: 5px;" id="connected"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Latency: </th>
-          <td style="margin: 5px;" id="latency"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Connection type: </th>
-          <td style="margin: 5px;" id="ctype"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Data received: </th>
-          <td style="margin: 5px;" id="rx"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Data transferred: </th>
-          <td style="margin: 5px;" id="tx"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">High Certainty: </th>
-          <td style="margin: 5px;" id="high"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Moderate Certainty: </th>
-          <td style="margin: 5px;" id="mod"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Low Certainty: </th>
-          <td style="margin: 5px;" id="low"></td>
-        </tr>
-        </table>
-        </p>
-      </div>
-    </section>
+    </div>
   </body>
 </html>

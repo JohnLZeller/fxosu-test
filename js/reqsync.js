@@ -1,6 +1,6 @@
 'use strict';
 
-var task = 'test15sec';
+var task = 'reqsynctest';
 
 function log(msg) {
   var el = document.createElement('div');
