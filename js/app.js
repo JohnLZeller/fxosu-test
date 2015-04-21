@@ -26,6 +26,7 @@ if ('serviceWorker' in navigator) {
 document.getElementById('swreqtest').addEventListener('click', swreqTest);
 // document.getElementById('Data').addEventListener('click', bmTest());
 document.getElementById('bm').addEventListener('click', bmTest);
+document.getElementById('fxosutest').addEventListener('click', fxosuTest);
 
 function log(msg) {
   var el = document.createElement('div');
@@ -67,11 +68,45 @@ function swreqTest() {
   }
 }
 
+function fxosuTest() {
+  if ('mozFxOSUService' in navigator) {
+    var fxosu = navigator.mozFxOSUService;
+    var netlat = fxosu.showLatency();
+    document.getElementById('batlevel').innerHTML = fxosu.batteryLevel() * 100 + "%";
+    document.getElementById('batcharge').innerHTML = (fxosu.batteryCharging() == true ? 'Yes' : 'No');
+    if (fxosu.batteryLevel() == 1) {
+      document.getElementById('batcharge').innerHTML += " (battery is 100%, so might be charging)";
+    }
+    document.getElementById('connected').innerHTML = (fxosu.connectionUp() == true ? 'Yes' : 'No');
+    document.getElementById('latency').innerHTML = netlat.networkLatency;
+    document.getElementById('ctype').innerHTML = fxosu.connectionType();
+    document.getElementById('high').innerHTML = fxosu.mozIsNowGood(1);
+    document.getElementById('mod').innerHTML = fxosu.mozIsNowGood(2);
+    document.getElementById('low').innerHTML = fxosu.mozIsNowGood(3);
+  } else {
+    console.log("mozFxOSUService does not exists");
+  }
+}
+
 function bmTest() {
-  // var p = document.createElement("P");
-  // var c = document.createTextNode("This is a paragraph.");
-  // p.appendChild(c);
-  // document.getElementById("benchmark").appendChild(p);
-  var content = "Content";
+  // performance goal: CPU, memory, battery, network activities
+  // constraints: 5 apps, 10 requests
+  var start = performance.now();
+  var result = runBenchmark()
+  var end = performance.now();
+  var time = end - start;
+  var content = "Time: " + time.toPrecision(3) + " milliseconds<br \>Memory usage: " + result.mem_usage + "<br \>Battery usage: " + result.bat_usage + "%<br \>Network usage: " + result.net_usage + " bytes";
   document.getElementById("bmcontent").innerHTML = content;
+}
+
+function runBenchmark() {
+  var bat = navigator.battery;
+  var bat_start = bat.level;
+  var bat_end = bat.level;
+  var result = {};
+  result.mem_usage = 0;
+  result.bat_usage = (bat_end - bat_start) * 100;
+  result.net_usage = 0;
+  
+  return result
 }

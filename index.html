@@ -1,123 +1,130 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8">
+    <title>Test app</title>
+    <meta name="description" content="Test app">
 
-<head>
-  <meta charset='utf-8'>
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="description" content="fxosu test : ">
-  <meta name="viewport" content="width=device-width">
-  <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-  <script type="text/javascript" src="javascripts/main.js" defer></script>
-  <script type="text/javascript" src="javascripts/reqsync.js" defer></script>
-  <script type="text/javascript" src="javascripts/tabcontent.js" defer></script>
-  <title>FxOSU Test</title>
-</head>
+    <!--
+      viewport allows you to control how mobile browsers will render your content.
+      width=device-width tells mobile browsers to render your content across the
+      full width of the screen, without being zoomed out (by default it would render
+      it at a desktop width, then shrink it to fit.)
+      Read more about it here:
+      https://developer.mozilla.org/Mozilla/Mobile/Viewport_meta_tag
+    -->
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="css/app.css">
 
-<body>
+    <!--
+    Inline JavaScript code is not allowed for privileged and certified apps,
+    due to Content Security Policy restrictions.
+    You can read more about it here: https://developer.mozilla.org/Apps/CSP
+    Plus keeping your JavaScript separated from your HTML is always a good practice!
 
-  <!-- HEADER -->
-  <div id="header_wrap" class="outer">
-    <header class="inner">
-    <a id="forkme_banner" href="https://github.com/IvanTjiam/Draft">View on GitHub</a>
+    We're also using the 'defer' attribute. This allows us to tell the browser that
+    it should not wait for this file to load before continuing to load the rest of
+    resources in the page. Then, once everything has been loaded, it will parse and
+    execute the deferred files.
+    Read about defer: https://developer.mozilla.org/Web/HTML/Element/script#attr-defer
+    -->
+    <script type="text/javascript" src="js/app.js" defer></script>
+    <script type="text/javascript" src="js/reqsync.js" defer></script>
+    <script type="text/javascript" src="js/tabcontent.js" defer></script>
 
-    <h1 id="project_title">FxOSU Test</h1>
-    <h2 id="project_tagline"></h2>
-
-      <section id="downloads">
-      <a class="zip_download_link" href="https://github.com/IvanTjiam/Draft/zipball/master">Download this project as a .zip file</a>
-      <a class="tar_download_link" href="https://github.com/IvanTjiam/Draft/tarball/master">Download this project as a tar.gz file</a>
-      </section>
-    </header>
-  </div>
-
-  <!-- MAIN CONTENT -->
-  <div id="main_content_wrap" class="outer">
-  <section id="main_content" class="inner">
-    <!-- pre><code>$ cd your_repo_root/repo_name
-    $ git fetch origin
-    $ git checkout gh-pages
-    </code></pre -->
-    <h3><a id="swtest" class="anchor" href="#swtest" aria-hidden="true"><span class="octicon octicon-link"></span></a>Service Worker and RequestSync Test</h3>
+    <!--
+    The following two lines are for loading the localisations library
+    and the localisation data-so people can use the app in their
+    own language (as long as you provide translations).
+    -->
+    <link rel="prefetch" type="application/l10n" href="data/locales.ini" />
+    <script type="text/javascript" src="js/libs/l10n.js" defer></script>
+  </head>
+  <body>
     <div style="max-width: 700px; margin: 0 auto 0 auto;">
-        <div id="js-log" style="height: 200px; overflow: scroll; color: white; background: black; font-family: monospace; line-height: 150%; font-size: 12px; padding: 7px;"></div> 
-        <p>
-        <table>
-        <tr>
-          <th style="text-align: left;">Service worker: </th>
-          <td><button id="swinstall">install</button></td>
-        </tr>
-        <tr>
-          <th style="text-align: left;">Test: </th>
-          <td><button id="test">Start</button></td>
-        </tr>
-        <tr>
-          <th style="text-align: left;">RequestSync: </th>
-          <!-- <td><button id="reglist">List</button></td> -->
-          <!-- <td><button id="regsync">Register</button></td> -->
-          <!-- <td><button id="unregsync">Unregister</button></td> -->
-          <td><button id="data">Data</button></td>
-        </tr>
-        </table>
-        <p>
+      <div id="header">
+        <h2 data-l10n-id="app_title">FxOSUService Test App</h2>
+        <p data-l10n-id="app_description"></p>
       </div>
-    <div style="max-width: 700px; margin: 0 auto 0 auto;">
-      <h3>API test</h3>
-      <button id="fxosactivate">Activate</button>
-      <p>
-      <table>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Battery Level: </th>
-          <td style="margin: 5px;" id="batlevel"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Battery Charging: </th>
-          <td style="margin: 5px;" id="batcharge"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Connected to Internet: </th>
-          <td style="margin: 5px;" id="connected"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Latency: </th>
-          <td style="margin: 5px;" id="latency"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Connection type: </th>
-          <td style="margin: 5px;" id="ctype"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Data received: </th>
-          <td style="margin: 5px;" id="rx"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Data transferred: </th>
-          <td style="margin: 5px;" id="tx"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">High Certainty: </th>
-          <td style="margin: 5px;" id="high"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Moderate Certainty: </th>
-          <td style="margin: 5px;" id="mod"></td>
-        </tr>
-        <tr>
-          <th style="text-align: left; vertical-align: text-top;">Low Certainty: </th>
-          <td style="margin: 5px;" id="low"></td>
-        </tr>
-        </table>
-      </p>
+      <ul class="tabs" data-persist="true">
+        <li><a href="#swreq">SW RS Test</a></li>
+        <li><a href="#benchmark">Benchmark</a></li>
+        <li><a href="#fxosuservice">API</a></li>
+      </ul>
+      <div class="tabcontents">
+        <div id="swreq">
+          <h3>Service Worker and RequestSync test</h3>
+          <div id="js-log" style="height: 200px; overflow: scroll; color: white; background: black; font-family: monospace; line-height: 150%; font-size: 12px; padding: 7px;"></div><br />
+          <table>
+          <tr>
+            <th style="text-align: left;">Service worker: </th>
+            <td><button id="swinstall">install</button></td>
+          </tr>
+          <tr>
+            <th style="text-align: left;">Test: </th>
+            <td><button id="swreqtest">Start</button></td>
+          </tr>
+          <tr>
+            <th style="text-align: left;">RequestSync: </th>
+            <td><button id="data">Data</button></td>
+          </tr>
+          </table>
+        </div>
+        <div id="benchmark">
+          <h3>FxOSUService Benchmark</h3>
+          <p>The test app for the API should benchmark device resource usage, contrasting use with the API and use without the API</p>
+          <button id="bm">Start</button>
+          <p id="bmcontent"></p>
+        </div>    
+        <div id="fxosuservice">
+          <p><h3>API test</h3></p>
+          <button id="fxosutest">Test</button>
+          <p>
+          <table>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Battery Level: </th>
+            <td style="margin: 5px;" id="batlevel"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Battery Charging: </th>
+            <td style="margin: 5px;" id="batcharge"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Connected to Internet: </th>
+            <td style="margin: 5px;" id="connected"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Latency: </th>
+            <td style="margin: 5px;" id="latency"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Connection type: </th>
+            <td style="margin: 5px;" id="ctype"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Data received: </th>
+            <td style="margin: 5px;" id="rx"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Data transferred: </th>
+            <td style="margin: 5px;" id="tx"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">High Certainty: </th>
+            <td style="margin: 5px;" id="high"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Moderate Certainty: </th>
+            <td style="margin: 5px;" id="mod"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left; vertical-align: text-top;">Low Certainty: </th>
+            <td style="margin: 5px;" id="low"></td>
+          </tr>
+          </table>
+          </p>
+        </div>
+      </div>
     </div>
-  </section>
-  </div>
-
-  <!-- FOOTER-->
-  <div id="footer_wrap" class="outer">
-  <footer class="inner">
-    <p class="copyright">Draft maintained by <a href="https://github.com/IvanTjiam">IvanTjiam</a></p>
-    <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-  </footer>
-  </div>
-
-</body>
+  </body>
 </html>
