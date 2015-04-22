@@ -141,7 +141,7 @@ function bmTest(level) {
 
 function runBenchmark(level) {
   // make web request
-  var responses = "None"
+  var responses = ""
   var xmlhttp = new XMLHttpRequest();
   var urls = [
   "sw.js", 
@@ -152,7 +152,7 @@ function runBenchmark(level) {
     xmlhttp.open("GET", urls[i], false);
     xmlhttp.send(null);
     if ( xmlhttp.readyState == 4 && xmlhttp.status == 200 ) {
-      responses = xmlhttp.responseText;
+      responses += xmlhttp.responseText + "\n";
     }
   }
   document.getElementById("bmresponse").innerHTML = responses;
