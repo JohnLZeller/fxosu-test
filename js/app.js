@@ -141,11 +141,19 @@ function bmTest(level) {
 
 function runBenchmark(level) {
   // make web request
+  var responses = "None"
   var xmlhttp = new XMLHttpRequest();
-  var url = "http://www.google.com";
-  xmlhttp.open("GET", url, false);
-  xmlhttp.send(null);
-  if ( xmlhttp.readyState == 4 && xmlhttp.status == 200 ) {
-    document.getElementById("bmresponse").innerHTML = xmlhttp.responseText;
+  var urls = [
+  "sw.js", 
+  "LICENSE", 
+  "manifest.webapp", 
+  ];
+  for (i = 0; i < urls.length; i++) {
+    xmlhttp.open("GET", urls[i], false);
+    xmlhttp.send(null);
+    if ( xmlhttp.readyState == 4 && xmlhttp.status == 200 ) {
+      responses = xmlhttp.responseText;
+    }
   }
+  document.getElementById("bmresponse").innerHTML = responses;
 }
