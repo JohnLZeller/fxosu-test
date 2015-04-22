@@ -141,5 +141,11 @@ function bmTest(level) {
 
 function runBenchmark(level) {
   // make web request
-
+  var xmlhttp = new XMLHttpRequest();
+  var url = "http://www.google.com";
+  xmlhttp.open("GET", url, false);
+  xmlhttp.send(null);
+  if ( xmlhttp.readyState == 4 && xmlhttp.status == 200 ) {
+    document.getElementById("bmresponse").innerHTML = xmlhttp.responseText;
+  }
 }
