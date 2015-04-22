@@ -24,9 +24,12 @@ if ('serviceWorker' in navigator) {
 }
 
 document.getElementById('swreqtest').addEventListener('click', swreqTest);
-// document.getElementById('Data').addEventListener('click', bmTest());
-document.getElementById('bm').addEventListener('click', bmTest);
+// document.getElementById('Data').addEventListener('click', bmTest;
 document.getElementById('fxosutest').addEventListener('click', fxosuTest);
+document.getElementById('bm0').addEventListener('click', function(){ bmTest(0); });
+document.getElementById('bm1').addEventListener('click', function(){ bmTest(1); });
+document.getElementById('bm2').addEventListener('click', function(){ bmTest(2); });
+document.getElementById('bm3').addEventListener('click', function(){ bmTest(3); });
 
 function log(msg) {
   var el = document.createElement('div');
@@ -88,25 +91,61 @@ function fxosuTest() {
   }
 }
 
-function bmTest() {
+function bmTest(level) {
   // performance goal: CPU, memory, battery, network activities
   // constraints: 5 apps, 10 requests
+
   var start = performance.now();
-  var result = runBenchmark()
+  // var bat_start = navigator.battery.level;
+  // var mem_start = 0;
+  // var net_start = 0;
+
+  if (level == 0) {
+    console.log("Running without mozFxOSUService");
+    runBenchmark()
+  } else {
+    if ('mozFxOSUService' in navigator) {
+      console.log("Running with mozFxOSUService");
+      var fxosu = navigator.mozFxOSUService;
+      var level = 3;
+      var good = false;
+      good = fxosu.mozIsNowGood(level, false)
+      console.log("Certainty level " + level + ': Is moz now good?');
+      if (good == true) {
+        console.log('Yes');
+        runBenchmark()
+      }
+      else {
+        console.log('No');
+      }
+    } else {
+      console.log("mozFxOSUService does not exists");
+      console.log("Running without mozFxOSUService");
+      runBenchmark()
+    }
+  }
+
+  // var bat_end = navigator.battery.level;
+  // var mem_end = 0;
+  // var net_end = 0;
   var end = performance.now();
+
+  var bat_usage = 0; // bat_end - bat_start) * 100;
+  var mem_usage = 0; // mem_end - mem_start;
+  var net_usage = 0; // net_end - net_start;
   var time = end - start;
-  var content = "Time: " + time.toPrecision(3) + " milliseconds<br \>Memory usage: " + result.mem_usage + "<br \>Battery usage: " + result.bat_usage + "%<br \>Network usage: " + result.net_usage + " bytes";
+
+  var content = "Time: " + time.toPrecision(3) + " milliseconds<br \>Memory usage: " + mem_usage + "<br \>Battery usage: " + bat_usage + "%<br \>Network usage: " + net_usage + " bytes";
   document.getElementById("bmcontent").innerHTML = content;
 }
 
-function runBenchmark() {
-  var bat = navigator.battery;
-  var bat_start = bat.level;
-  var bat_end = bat.level;
-  var result = {};
-  result.mem_usage = 0;
-  result.bat_usage = (bat_end - bat_start) * 100;
-  result.net_usage = 0;
-  
-  return result
+function runBenchmark(level) {
+  // make web request
+  var xmlhttp = new XMLHttpRequest();
+  var url = "http://www.google.com";
+  xmlhttp.open("GET", url, false);
+  xmlhttp.send(null);
+  if ( xmlhttp.readyState == 4 && xmlhttp.status == 200 ) {
+    document.getElementById("bmresponse").innerHTML = xmlhttp.responseText;
+  }
 }

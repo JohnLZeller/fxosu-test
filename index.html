@@ -73,7 +73,19 @@
         <div id="benchmark">
           <h3>FxOSUService Benchmark</h3>
           <p>The test app for the API should benchmark device resource usage, contrasting use with the API and use without the API</p>
-          <button id="bm">Start</button>
+          <table>
+          <tr>
+            <th style="text-align: left;">Without FxOSUService: </th>
+            <td><button id="bm0">Start</button></td>
+          </tr>
+          <tr>
+            <th style="text-align: left;">With FxOSUService: </th>
+            <td><button id="bm1">level 1</button></td>
+            <td><button id="bm2">level 2</button></td>
+            <td><button id="bm3">level 3</button></td>
+          </tr>
+          </table>
+          <p id="bmresponse"></p>
           <p id="bmcontent"></p>
         </div>    
         <div id="fxosuservice">
