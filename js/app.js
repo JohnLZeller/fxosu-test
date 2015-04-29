@@ -119,8 +119,7 @@ function bmTest(level) {
         console.log('No');
       }
     } else {
-      console.log("mozFxOSUService does not exists");
-      console.log("Running without mozFxOSUService");
+      console.log("mozFxOSUService does not exists. Running without mozFxOSUService");
       runBenchmark()
     }
   }
@@ -144,15 +143,13 @@ function runBenchmark(level) {
   var responses = ""
   var xmlhttp = new XMLHttpRequest();
   var urls = [
-  "sw.js", 
-  "LICENSE", 
-  "manifest.webapp", 
+  "http://ivantjiam.github.io/Draft/" 
   ];
   for (i = 0; i < urls.length; i++) {
     xmlhttp.open("GET", urls[i], false);
     xmlhttp.send(null);
     if ( xmlhttp.readyState == 4 && xmlhttp.status == 200 ) {
-      responses += xmlhttp.responseText + "\n";
+      responses += xmlhttp.responseText;
     }
   }
   document.getElementById("bmresponse").innerHTML = responses;
