@@ -3,137 +3,128 @@
   <head>
     <meta charset="utf-8">
     <title>Test app</title>
-    <meta name="description" content="Test app">
-
-    <!--
-      viewport allows you to control how mobile browsers will render your content.
-      width=device-width tells mobile browsers to render your content across the
-      full width of the screen, without being zoomed out (by default it would render
-      it at a desktop width, then shrink it to fit.)
-      Read more about it here:
-      https://developer.mozilla.org/Mozilla/Mobile/Viewport_meta_tag
-    -->
+    <meta name="description" content="FxOSU Test App">
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="css/app.css">
-
-    <!--
-    Inline JavaScript code is not allowed for privileged and certified apps,
-    due to Content Security Policy restrictions.
-    You can read more about it here: https://developer.mozilla.org/Apps/CSP
-    Plus keeping your JavaScript separated from your HTML is always a good practice!
-
-    We're also using the 'defer' attribute. This allows us to tell the browser that
-    it should not wait for this file to load before continuing to load the rest of
-    resources in the page. Then, once everything has been loaded, it will parse and
-    execute the deferred files.
-    Read about defer: https://developer.mozilla.org/Web/HTML/Element/script#attr-defer
-    -->
+    <script type="text/javascript" src="js/jquery.js" defer></script>
+    <script type="text/javascript" src="js/jquery.mockjax.js" defer></script>
     <script type="text/javascript" src="js/app.js" defer></script>
-    <script type="text/javascript" src="js/reqsync.js" defer></script>
     <script type="text/javascript" src="js/tabcontent.js" defer></script>
-
-    <!--
-    The following two lines are for loading the localisations library
-    and the localisation data-so people can use the app in their
-    own language (as long as you provide translations).
-    -->
     <link rel="prefetch" type="application/l10n" href="data/locales.ini" />
     <script type="text/javascript" src="js/libs/l10n.js" defer></script>
   </head>
   <body>
     <div style="max-width: 700px; margin: 0 auto 0 auto;">
       <div id="header">
-        <h2 data-l10n-id="app_title">FxOSUService Test App</h2>
+        <h2 data-l10n-id="app_title"></h2>
         <p data-l10n-id="app_description"></p>
       </div>
       <ul class="tabs" data-persist="true">
-        <li><a href="#swreq">SW RS Test</a></li>
         <li><a href="#benchmark">Benchmark</a></li>
         <li><a href="#fxosuservice">API</a></li>
       </ul>
       <div class="tabcontents">
-        <div id="swreq">
-          <h3>Service Worker and RequestSync test</h3>
-          <div id="js-log" style="height: 200px; overflow: scroll; color: white; background: black; font-family: monospace; line-height: 150%; font-size: 12px; padding: 7px;"></div><br />
-          <table>
-          <tr>
-            <th style="text-align: left;">Service worker: </th>
-            <td><button id="swinstall">install</button></td>
-          </tr>
-          <tr>
-            <th style="text-align: left;">Test: </th>
-            <td><button id="swreqtest">Start</button></td>
-          </tr>
-          <tr>
-            <th style="text-align: left;">RequestSync: </th>
-            <td><button id="data">Data</button></td>
-          </tr>
-          </table>
-        </div>
         <div id="benchmark">
           <h3>FxOSUService Benchmark</h3>
-          <p>The test app for the API should benchmark device resource usage, contrasting use with the API and use without the API</p>
-          <table>
-          <tr>
-            <th style="text-align: left;">Without FxOSUService: </th>
-            <td><button id="bm0">Start</button></td>
+          <p>Benchmarks device resource usage, contrasting use with the API and use without the API.</p>
+
+          <center>Choose Confidence Level</center>
+          <form>
+            <select style="width: 50%; height: 30px; font-size: 1em; margin: 0px auto;" id="benchmarkLevel">
+              <option>1 - High</option>
+              <option selected="selected">2 - Moderate</option>
+              <option>3 - Low</option>
+            </select>
+          </form><br>
+          <center><button id="runbenchmark">Run Benchmark Test</button></center>
+          <table style="padding: 5px;">
+          <tr style="padding: 5px;">
+            <td style="text-align: left; padding: 5px;">Usage</td>
+            <th style="text-align: left; padding: 5px;">without</th>
+            <th style="text-align: left; padding: 5px;">with</th>
           </tr>
-          <tr>
-            <th style="text-align: left;">With FxOSUService: </th>
-            <td><button id="bm1">level 1</button></td>
-            <td><button id="bm2">level 2</button></td>
-            <td><button id="bm3">level 3</button></td>
+          <tr style="padding: 5px;">
+            <th style="text-align: left; padding: 5px;">Battery</th>
+            <td style="padding: 5px;" id="batWithout"></td>
+            <td style="padding: 5px;" id="batWith"></td>
+          </tr>
+            <th style="text-align: left; padding: 5px;">Memory</th>
+            <td style="padding: 5px;" id="memWithout"></td>
+            <td style="padding: 5px;" id="memWith"></td>
+          </tr>
+          <tr style="padding: 5px;">
+            <th style="text-align: left; padding: 5px;">Data</th>
+            <td style="padding: 5px;" id="dataWithout"></td>
+            <td style="padding: 5px;" id="dataWith"></td>
+          </tr>
+          <tr style="padding: 5px;">
+            <th style="text-align: left; padding: 5px;">Latency</th>
+            <td style="padding: 5px;" id="latWithout"></td>
+            <td style="padding: 5px;" id="latWith"></td>
+          </tr>
+          <tr style="padding: 5px;">
+            <th style="text-align: left; padding: 5px;">Success Rate</th>
+            <td style="padding: 5px;" id="sucWithout"></td>
+            <td style="padding: 5px;" id="sucWith"></td>
           </tr>
           </table>
-          <p id="bmresponse"></p>
-          <p id="bmcontent"></p>
         </div>    
         <div id="fxosuservice">
-          <p><h3>API test</h3></p>
+          <p><h3>API Test</h3></p>
           <button id="fxosutest">Test</button>
           <p>
-          <table>
-          <tr>
-            <th style="text-align: left; vertical-align: text-top;">Battery Level: </th>
-            <td style="margin: 5px;" id="batlevel"></td>
-          </tr>
-          <tr>
-            <th style="text-align: left; vertical-align: text-top;">Battery Charging: </th>
-            <td style="margin: 5px;" id="batcharge"></td>
-          </tr>
-          <tr>
-            <th style="text-align: left; vertical-align: text-top;">Connected to Internet: </th>
-            <td style="margin: 5px;" id="connected"></td>
-          </tr>
-          <tr>
-            <th style="text-align: left; vertical-align: text-top;">Latency: </th>
-            <td style="margin: 5px;" id="latency"></td>
-          </tr>
-          <tr>
-            <th style="text-align: left; vertical-align: text-top;">Connection type: </th>
-            <td style="margin: 5px;" id="ctype"></td>
-          </tr>
-          <tr>
-            <th style="text-align: left; vertical-align: text-top;">Data received: </th>
-            <td style="margin: 5px;" id="rx"></td>
-          </tr>
-          <tr>
-            <th style="text-align: left; vertical-align: text-top;">Data transferred: </th>
-            <td style="margin: 5px;" id="tx"></td>
-          </tr>
-          <tr>
-            <th style="text-align: left; vertical-align: text-top;">High Certainty: </th>
-            <td style="margin: 5px;" id="high"></td>
-          </tr>
-          <tr>
-            <th style="text-align: left; vertical-align: text-top;">Moderate Certainty: </th>
-            <td style="margin: 5px;" id="mod"></td>
-          </tr>
-          <tr>
-            <th style="text-align: left; vertical-align: text-top;">Low Certainty: </th>
-            <td style="margin: 5px;" id="low"></td>
-          </tr>
-          </table>
+            <h3>Internal API functions</h3>
+            <table>
+              <tr>
+                <th style="text-align: left; vertical-align: text-top;">Battery Level: </th>
+                <td style="margin: 5px;" id="batlevel"></td>
+              </tr>
+              <tr>
+                <th style="text-align: left; vertical-align: text-top;">Battery Charging: </th>
+                <td style="margin: 5px;" id="batcharge"></td>
+              </tr>
+              <tr>
+                <th style="text-align: left; vertical-align: text-top;">Connected to Internet: </th>
+                <td style="margin: 5px;" id="connected"></td>
+              </tr>
+              <tr>
+                <th style="text-align: left; vertical-align: text-top;">Latency (ms): </th>
+                <td style="margin: 5px;" id="latency"></td>
+              </tr>
+              <tr>
+                <th style="text-align: left; vertical-align: text-top;">Connection type: </th>
+                <td style="margin: 5px;" id="ctype"></td>
+              </tr>
+              <tr>
+                <th style="text-align: left; vertical-align: text-top;">Bytes Received: </th>
+                <td style="margin: 5px;" id="recbytes"></td>
+              </tr>
+              <tr>
+                <th style="text-align: left; vertical-align: text-top;">Connection Stable: </th>
+                <td style="margin: 5px;" id="cstable"></td>
+              </tr>
+              <tr>
+                <th style="text-align: left; vertical-align: text-top;">Success Rate: </th>
+                <td style="margin: 5px;" id="successrate"></td>
+              </tr>
+            </table>
+
+            <h3>Calling of mozIsNowGood()</h3>
+            This API allows the developer to set a level of certainty with 1 being high, 2 being moderate, and 3 being low. This returns a true/false (go/no-go) answer.<br><br>
+            <table>
+              <tr>
+                <th style="text-align: left; vertical-align: text-top;">High Certainty: </th>
+                <td style="margin: 5px;" id="high"></td>
+              </tr>
+              <tr>
+                <th style="text-align: left; vertical-align: text-top;">Moderate Certainty: </th>
+                <td style="margin: 5px;" id="mod"></td>
+              </tr>
+              <tr>
+                <th style="text-align: left; vertical-align: text-top;">Low Certainty: </th>
+                <td style="margin: 5px;" id="low"></td>
+              </tr>
+            </table>
           </p>
         </div>
       </div>
