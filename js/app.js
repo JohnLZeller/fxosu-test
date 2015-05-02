@@ -125,7 +125,12 @@ window.addEventListener('DOMContentLoaded', function() {
     //_sendFail();
     //return;
 
-    switch (benchmarkLevel) {
+    // Update table
+    atmWithout.innerHTML = 0;
+    atmWith.innerHTML = 0;
+    progressBar.setAttributeNS(null, 'width', '0%');
+
+    switch (benchmarkLevel.value) {
       case "1 - High":
         level = 1;
         break;
@@ -199,6 +204,8 @@ window.addEventListener('DOMContentLoaded', function() {
   // TODO: Implement with Web Workers? Multi-threaded :)
   function sendRequestWith() {
     while (1) {
+      document.getElementById('debug1').innerHTML = "Level: " + level;
+      document.getElementById('debug2').innerHTML = attemptsWith + ": " + navigator.mozFxOSUService.mozIsNowGood(level);
       if (navigator.mozFxOSUService.mozIsNowGood(level)) {
         attemptsWith += 1;
 
