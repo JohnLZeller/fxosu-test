@@ -2,20 +2,38 @@
 // but without waiting for other external resources to load (css/images/etc)
 // That makes the app more responsive and perceived as faster.
 // https://developer.mozilla.org/Web/Reference/Events/DOMContentLoaded
+
+/* REMEMBER
+ * - Check that internet connection is on and working
+ * - 
+ * 
+ * 
+ * 
+ * 
+ */
 window.addEventListener('DOMContentLoaded', function() {
 
   // We'll ask the browser to use strict code to help us catch errors earlier.
   // https://developer.mozilla.org/Web/JavaScript/Reference/Functions_and_function_scope/Strict_mode
   'use strict';
 
-  var mockjaxDefaults = $.extend({}, $.mockjaxSettings);
-  var url = 'https://example.com';
-  var request = null;
+  var urlSuccess = 'https://example.com';
+  var urlFail = 'http://www.google.com/fail'; // Returns a 404, which gets logged as a failure by the API we are testing
+  var requestWith = null;
+  var requestWithout = null;
   var attemptsWith = 0;
   var attemptsWithout = 0;
-  var interrupt = 0;
+  var successesWith = 0;
+  var successesWithout = 0;
+  var level = 2;
+  var r = null;
+  var nWith = 30;
+  var nWithout = 30;
   var translate = navigator.mozL10n.get;
   var benchmarkLevel = document.getElementById('benchmarkLevel');
+  var progressBar = document.getElementById('progress');
+  var atmWithout = document.getElementById('attemptsWithout');
+  var atmWith = document.getElementById('attemptsWith');
 
   var fxosutest = document.getElementById('fxosutest');
   fxosutest.addEventListener('click', function(e) {
@@ -63,6 +81,7 @@ window.addEventListener('DOMContentLoaded', function() {
       }
       var netlat = fxosu.latencyInfo();
       var sucRate = fxosu.successRate();
+      var mozSucRate = fxosu.successRate(2000);
       var batLevel = fxosu.batteryLevel();
       var batCha = fxosu.batteryCharging();
       document.getElementById('batlevel').innerHTML = batLevel * 100 + "%";
@@ -70,24 +89,42 @@ window.addEventListener('DOMContentLoaded', function() {
       if (batLevel == 1.0 && !batCha) {
         document.getElementById('batcharge').innerHTML += " (battery is 100%, so might be charging)";
       }
-      document.getElementById('connected').innerHTML = (fxosu.connectionUp() === true ? 'Yes' : 'No');
+      // TODO: Unreliable
+      document.getElementById('connected').innerHTML = "Unknown"; //(fxosu.connectionUp() === true ? 'Yes' : 'No');
       // TODO: Do a network request, to get some latency info
       document.getElementById('latency').innerHTML = netlat.networkLatency;
       document.getElementById('ctype').innerHTML = linkType;
       document.getElementById('recbytes').innerHTML = fxosu.receivedBytes();
       document.getElementById('cstable').innerHTML = (fxosu.isConnectionStable() === true ? 'Yes' : 'No');
-      document.getElementById('successrate').innerHTML = (sucRate.rate * 100) + "% (" + sucRate.successes + "/" + sucRate.attempted + ")";
+      document.getElementById('successrate').innerHTML = (sucRate.rate * 100).toFixed(2) + "% (" + sucRate.successes + "/" + sucRate.attempted + ")";
       document.getElementById('high').innerHTML = (fxosu.mozIsNowGood(1) === true ? 'Go' : 'No-Go');
       document.getElementById('mod').innerHTML = (fxosu.mozIsNowGood(2) === true ? 'Go' : 'No-Go');
       document.getElementById('low').innerHTML = (fxosu.mozIsNowGood(3) === true ? 'Go' : 'No-Go');
+      document.getElementById('mozbatlevel').innerHTML = batLevel * 100 + "%";
+      document.getElementById('mozbatcharge').innerHTML = (batCha === true ? 'Yes' : 'No');
+      document.getElementById('mozcstable').innerHTML = (fxosu.isConnectionStable(2000) === true ? 'Yes' : 'No');
+      document.getElementById('mozsuccessrate').innerHTML = (mozSucRate.rate * 100).toFixed(2) + "% (" + mozSucRate.successes + "/" + mozSucRate.attempted + ")";
     } else {
       console.log("mozFxOSUService does not exist");
     }
 
   }
 
+  // Currently runs in waves of 5 secs on, 5 secs off
+  function getInterrupt() {
+    var num = (new Date()).getTime() % 10000;
+    if (num > 5000) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+
   function runBenchmark() {
-    var level = 2;
+    //_sendFail();
+    //return;
+
     switch (benchmarkLevel) {
       case "1 - High":
         level = 1;
@@ -103,130 +140,169 @@ window.addEventListener('DOMContentLoaded', function() {
         break;
     }
 
-    getReq();
-  }
-
-
-  function getReq() {
     // Reset our counters
     attemptsWith = 0;
     attemptsWithout = 0;
-    var n = 10;
-    
-    for (var i = 0; i < n; i ++) { // Grab the website 10 times
-      interrupt = parseInt(Math.random() * 2);
+    successesWith = 0;
+    successesWithout = 0;
 
-      sendRequestWithout();
-      sendRequestWith();
-    }
+    sendRequestWithout();
+    sendRequestWith();
 
-    // Set Labels
-    document.getElementById('sucWithout').innerHTML = ((n / attemptsWithout) * 100).toFixed(2) + "%<br> (" + 
-                                                      n + "/" + attemptsWithout + ")";
-    document.getElementById('sucWith').innerHTML = ((n / attemptsWith) * 100).toFixed(2) + "%<br> (" + 
-                                                      n + "/" + attemptsWith + ")";
   }
 
+  function _sendFail () {
+    // mozSystem option required to prevent CORS errors (Cross Origin Resource Sharing)
+    var r = new XMLHttpRequest({ mozSystem: true });
+    r.responseType = 'document';
 
-  function sendRequestWith() {
-    console.log("#" + (attemptsWith + 1) + ": sendRequestWith");
-    var result = null;
-    var tries = 0;
+    r.addEventListener('load', function () {
+      alert(r.status);
+    });
 
-    // Continue attempting to make request, until it is successful
-    while (!result) {
-      if (navigator.mozFxOSUService.mozIsNowGood()) {
-        if (tries === 0) {
-          result = sendReq(0);
-        } else {
-          result = sendReq(1); // retry
-        }
-        attemptsWith += 1;
-        tries += 1;
-      }
-    }
+    r.open('get', urlFail + '?_=' + (new Date()).getTime(), true); // Appending a rand to tail of url, ensures no caching
+    r.send();
+    console.log("Did the thing!");
   }
 
-
+  // TODO: Implement with Web Workers? Multi-threaded :)
   function sendRequestWithout() {
-    console.log("#" + (attemptsWithout + 1) + ": sendRequestWithout");
-    var result = null;
-    var tries = 0;
+    attemptsWithout += 1;
 
-    // Continue attempting to make request, until it is successful
-    while (!result) {
-      if (tries === 0) {
-        result = sendReq(0);
-      } else {
-        result = sendReq(1); // retry
-      }
-      attemptsWithout += 1;
-      tries += 1;
-    }
-  }
-
-
-  function sendReq(retry) {
-    retry = typeof retry !== 'undefined' ? retry : 0; // 0 is no, 1 is yes
-
-    // Are we searching already? Then stop that search
-    if(request && request.abort) {
-      request.abort();
-    }
-
-    // If you don't set the mozSystem option, you'll get CORS errors (Cross Origin Resource Sharing)
-    // You can read more about CORS here: https://developer.mozilla.org/docs/HTTP/Access_control_CORS
-    request = new XMLHttpRequest({ mozSystem: true });
-
-    request.open('get', url, true);
-    request.responseType = 'document';
+    // mozSystem option required to prevent CORS errors (Cross Origin Resource Sharing)
+    requestWithout = new XMLHttpRequest({ mozSystem: true });
+    requestWithout.responseType = 'document';
 
     // We're setting some handlers here for dealing with both error and data received.
-    request.addEventListener('error', onRequestError);
-    request.addEventListener('load', onRequestLoad);
+    requestWithout.addEventListener('error', function () {
+      onRequestError(sendRequestWithout);
+    });
+    requestWithout.addEventListener('load', function () {
+      onRequestLoad(sendRequestWithout);
+    });
 
-    // Randomly decide if there is a network interruption
-    var retryInterrupt = 0;
-    if (retry) {
-      retryInterrupt = parseInt(Math.random() * 2);
+    // Determine if we should simulate a network interruption
+    if (!getInterrupt()) { // success
+      requestWithout.open('get', urlSuccess + '?_=' + (new Date()).getTime(), true); // Appending a rand to tail of url, ensures no caching
+      requestWithout.send();
+      console.log("Without: Sent SUCCESS request (#" + attemptsWithout + ")");
+    } else { // fail
+      requestWithout.open('get', urlFail + '?_=' + (new Date()).getTime(), true); // Appending a rand to tail of url, ensures no caching
+      requestWithout.send();
+      console.log("Without: Sent FAIL request (#" + attemptsWithout + ")");
     }
 
-    if (interrupt === 0 && !retry) { // success, first try
-      request.send();
-      return true;
-    } else if (interrupt === 1 && !retry){ // fail, first try
-      request.timeout = 1; // Unrealistic for request to take 1ms, so it'll timeout
-      request.send();
-      return false;
-    } else if (retryInterrupt === 0 && retry) { // success, retry
-      request.send();
-      return true;
-    } else if (retryInterrupt === 1 && retry){ // fail, retry
-      request.timeout = 1; // Unrealistic for request to take 1ms, so it'll timeout
-      request.send();
-      return false;
-    }
-  }
-
-  function onRequestError() {
-
-    showError(request.error);
-
+    //console.log("Without: Request #" + attemptsWithout + " was received! Woohoo! On to the next one!");
   }
 
 
-  function onRequestLoad() {
+  // TODO: Implement with Web Workers? Multi-threaded :)
+  function sendRequestWith() {
+    while (1) {
+      if (navigator.mozFxOSUService.mozIsNowGood(level)) {
+        attemptsWith += 1;
 
-    var response = request.response;
-    var statusCode = request.status;
-    var statusText = request.statusText;
-    var timeout = request.timeout;
+        // mozSystem option required to prevent CORS errors (Cross Origin Resource Sharing)
+        requestWith = new XMLHttpRequest({ mozSystem: true });
+        requestWith.responseType = 'document';
 
+        // We're setting some handlers here for dealing with both error and data received.
+        requestWith.addEventListener('error', function () {
+          onRequestError(sendRequestWith);
+        });
+        requestWith.addEventListener('load', function () {
+          onRequestLoad(sendRequestWith);
+        });
+
+        // Determine if we should simulate a network interruption
+        if (!getInterrupt()) { // success
+          requestWith.open('get', urlSuccess + '?_=' + (new Date()).getTime(), true); // Appending a rand to tail of url, ensures no caching
+          requestWith.send();
+          console.log("With: Sent SUCCESS request (#" + attemptsWith + ")");
+        } else { // fail
+          requestWith.open('get', urlFail + '?_=' + (new Date()).getTime(), true); // Appending a rand to tail of url, ensures no caching
+          requestWith.send();
+          console.log("With: Sent FAIL request (#" + attemptsWith + ")");
+        }
+
+        // You did your thang, now leave
+        break;
+      }
+    }
+
+    //console.log("With: Request #" + attemptsWith + " was received! Woohoo! On to the next one!");
+  }
+
+
+  function onRequestError(func) {
+
+    if (func === sendRequestWithout) {
+      showError(requestWithout.error);
+    } else if (func === sendRequestWith) {
+      showError(requestWith.error);
+    }
+
+  }
+
+
+  function onRequestLoad(func) {
+    // TODO: Have this function check for all possible success types, not just 200
+    var contentLen = null;
+    var statusCode = null;
+
+    // Update table
+    atmWithout.innerHTML = attemptsWithout;
+    atmWith.innerHTML = attemptsWith;
+    var pro = ((successesWithout + successesWith) / (nWithout + nWith)) * 100;
+    progressBar.setAttributeNS(null, 'width', pro.toString() + '%');
+
+    if (func === sendRequestWithout) {
+      contentLen = requestWithout.getResponseHeader("Content-Length");
+      statusCode = requestWithout.status;
+
+      // Check status of reply
+      if (statusCode !== 200) { // If fail, retry
+        console.log("Without: Response #" + attemptsWithout + " FAILED with " + statusCode);
+        sendRequestWithout();
+      } else if (statusCode === 0) {
+        console.log("Without: Response #" + attemptsWithout + " ERROR of come kind");
+      } else { // If success, let next request happen
+        successesWithout += 1;
+        console.log("Without: Response #" + attemptsWithout + " SUCCEEDED");
+        if (successesWithout < nWithout) {
+          sendRequestWithout();
+        } else {
+          // Set Data
+          document.getElementById('sucWithout').innerHTML = ((nWithout / attemptsWithout) * 100).toFixed(2) + "% (" + 
+                                                            nWithout + "/" + attemptsWithout + ")";
+        }
+      }
+    } else if (func === sendRequestWith) {
+      contentLen = requestWith.getResponseHeader("Content-Length");
+      statusCode = requestWith.status;
+
+      // Check status of reply
+      if (statusCode !== 200) { // If fail, retry
+        console.log("With: Response #" + attemptsWith + " FAILED with " + statusCode);
+        sendRequestWith();
+      } else if (statusCode === 0) {
+        console.log("With: Response #" + attemptsWith + " ERROR of come kind");
+      } else { // If success, let next request happen
+        successesWith += 1;
+        console.log("With: Response #" + attemptsWith + " SUCCEEDED");
+        if (successesWith < nWith) {
+          sendRequestWith();
+        } else {
+          document.getElementById('sucWith').innerHTML = ((nWith / attemptsWith) * 100).toFixed(2) + "% (" + 
+                                                            nWith + "/" + attemptsWith + ")";
+        }
+      }
+    }
   }
 
 
   function showError(text) {
-    alert(text);
+    alert("ERROR: " + text);
   }
 
 });

@@ -6,8 +6,6 @@
     <meta name="description" content="FxOSU Test App">
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="css/app.css">
-    <script type="text/javascript" src="js/jquery.js" defer></script>
-    <script type="text/javascript" src="js/jquery.mockjax.js" defer></script>
     <script type="text/javascript" src="js/app.js" defer></script>
     <script type="text/javascript" src="js/tabcontent.js" defer></script>
     <link rel="prefetch" type="application/l10n" href="data/locales.ini" />
@@ -37,6 +35,10 @@
             </select>
           </form><br>
           <center><button id="runbenchmark">Run Benchmark Test</button></center>
+          <svg width="100%" height="20px" style="margin-top: 10px;">
+            <rect width="100%" height="20px" style="fill:rgb(0,0,0);" />
+            <rect id="progress" width="0%" height="20px" style="fill:rgb(0,0,255);" />
+          </svg>
           <table style="padding: 5px;">
           <tr style="padding: 5px;">
             <td style="text-align: left; padding: 5px;">Usage</td>
@@ -44,10 +46,16 @@
             <th style="text-align: left; padding: 5px;">with</th>
           </tr>
           <tr style="padding: 5px;">
+            <th style="text-align: left; padding: 5px;">Attempts</th>
+            <td style="padding: 5px;" id="attemptsWithout"></td>
+            <td style="padding: 5px;" id="attemptsWith"></td>
+          </tr>
+          <tr style="padding: 5px;">
             <th style="text-align: left; padding: 5px;">Battery</th>
             <td style="padding: 5px;" id="batWithout"></td>
             <td style="padding: 5px;" id="batWith"></td>
           </tr>
+          <tr style="padding: 5px;">
             <th style="text-align: left; padding: 5px;">Memory</th>
             <td style="padding: 5px;" id="memWithout"></td>
             <td style="padding: 5px;" id="memWith"></td>
@@ -123,6 +131,26 @@
               <tr>
                 <th style="text-align: left; vertical-align: text-top;">Low Certainty: </th>
                 <td style="margin: 5px;" id="low"></td>
+              </tr>
+            </table><br>
+
+            Here is the data being used from the past 2 seconds, to make these determinations:<br><br>
+            <table>
+              <tr>
+                <th style="text-align: left; vertical-align: text-top;">Battery Level: </th>
+                <td style="margin: 5px;" id="mozbatlevel"></td>
+              </tr>
+              <tr>
+                <th style="text-align: left; vertical-align: text-top;">Battery Charging: </th>
+                <td style="margin: 5px;" id="mozbatcharge"></td>
+              </tr>
+              <tr>
+                <th style="text-align: left; vertical-align: text-top;">Connection Stable: </th>
+                <td style="margin: 5px;" id="mozcstable"></td>
+              </tr>
+              <tr>
+                <th style="text-align: left; vertical-align: text-top;">Success Rate: </th>
+                <td style="margin: 5px;" id="mozsuccessrate"></td>
               </tr>
             </table>
           </p>
