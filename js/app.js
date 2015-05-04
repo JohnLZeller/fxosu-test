@@ -1,4 +1,4 @@
-// DOMContentLoaded is fired once the document has been loaded and parsed,
+ // DOMContentLoaded is fired once the document has been loaded and parsed,
 // but without waiting for other external resources to load (css/images/etc)
 // That makes the app more responsive and perceived as faster.
 // https://developer.mozilla.org/Web/Reference/Events/DOMContentLoaded
@@ -17,8 +17,8 @@ window.addEventListener('DOMContentLoaded', function() {
   // https://developer.mozilla.org/Web/JavaScript/Reference/Functions_and_function_scope/Strict_mode
   'use strict';
 
-  var urlSuccess = 'https://example.com';
-  var urlFail = 'http://www.google.com/fail'; // Returns a 404, which gets logged as a failure by the API we are testing
+  var urlSuccess = 'https://api.imgur.com/'; //example.com has no CORS support
+  var urlFail = 'www.test-cors.org/fail'; // Returns a 404, which gets logged as a failure by the API we are testing
   var requestWith = null;
   var requestWithout = null;
   var attemptsWith = 0;
@@ -309,6 +309,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
 
   function showError(text) {
+    // Failure COULD be because there is no CORS support on requested api
     alert("ERROR: " + text);
   }
 
