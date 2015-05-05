@@ -23,12 +23,12 @@
       </ul>
       <div class="tabcontents">
         <div id="benchmark">
-          <h3>FxOSUService Benchmark</h3>
-          <p>Benchmarks device resource usage, contrasting use with the API and use without the API. The benchmark test will attempt 30 requests each, and continue until they are successful.</p>
+          <h3 style="margin-top: -10px;">FxOSUService Benchmark</h3>
+          <p>Contrasts resource usage with/without our API. Each attempts 30 requests, continuing until successful.</p>
 
-          <center>Choose Confidence Level</center>
           <form>
-            <select style="width: 50%; height: 30px; font-size: 1em; margin: 0px auto;" id="benchmarkLevel">
+            <label>Confidence Level: </label>
+            <select style="width: 50%; height: 30px; font-size: 1em;" id="benchmarkLevel">
               <option>1 - High</option>
               <option selected="selected">2 - Moderate</option>
               <option>3 - Low</option>
@@ -41,24 +41,28 @@
           </svg>
           <table style="padding: 5px;">
           <tr style="padding: 5px;">
-            <td style="text-align: left; padding: 5px;">Debugging</td>
-            <td style="padding: 5px;" id="debug1"></td>
+            <th style="text-align: left; padding: 5px; colspan: 2;">Network Status: </th>
+            <td style="padding: 5px;" id="netStatus"></td>
           </tr>
-          <tr style="padding: 5px;">
-            <td style="text-align: left; padding: 5px;"></td>
-            <td style="padding: 5px;" id="debug2"></td>
-          </tr>
-          </table>
-          <table style="padding: 5px;">
           <tr style="padding: 5px;">
             <td style="text-align: left; padding: 5px;">Usage</td>
             <th style="text-align: left; padding: 5px;">without</th>
             <th style="text-align: left; padding: 5px;">with</th>
           </tr>
           <tr style="padding: 5px;">
+            <th style="text-align: left; padding: 5px;">Success Rate</th>
+            <td style="padding: 5px;" id="sucWithout"></td>
+            <td style="padding: 5px;" id="sucWith"></td>
+          </tr>
+          <tr style="padding: 5px;">
             <th style="text-align: left; padding: 5px;">Attempts</th>
             <td style="padding: 5px;" id="attemptsWithout"></td>
             <td style="padding: 5px;" id="attemptsWith"></td>
+          </tr>
+          <tr style="padding: 5px;">
+            <th style="text-align: left; padding: 5px;">Successes</th>
+            <td style="padding: 5px;" id="successesWithout"></td>
+            <td style="padding: 5px;" id="successesWith"></td>
           </tr>
           <tr style="padding: 5px;">
             <th style="text-align: left; padding: 5px;">Battery</th>
@@ -80,15 +84,10 @@
             <td style="padding: 5px;" id="latWithout"></td>
             <td style="padding: 5px;" id="latWith"></td>
           </tr>
-          <tr style="padding: 5px;">
-            <th style="text-align: left; padding: 5px;">Success Rate</th>
-            <td style="padding: 5px;" id="sucWithout"></td>
-            <td style="padding: 5px;" id="sucWith"></td>
-          </tr>
           </table>
         </div>    
         <div id="fxosuservice">
-          <p><h3>API Test</h3></p>
+          <p><h3 style="margin-top: -10px;">API Test</h3></p>
           <button id="fxosutest">Test</button>
           <p>
             <h3>Internal API functions</h3>

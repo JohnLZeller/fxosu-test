@@ -17,8 +17,16 @@ window.addEventListener('DOMContentLoaded', function() {
   // https://developer.mozilla.org/Web/JavaScript/Reference/Functions_and_function_scope/Strict_mode
   'use strict';
 
+  // TODO: Host our own server that gives specific responses with CORS support
   var urlSuccess = 'https://api.imgur.com/'; //example.com has no CORS support
   var urlFail = 'www.test-cors.org/fail'; // Returns a 404, which gets logged as a failure by the API we are testing
+  if (navigator.userAgent.indexOf("(Mobile") > -1) { // If this is on FXOS device
+    urlFail = 'http://www.test-cors.org/fail'; // Returns a 404, which gets logged as a failure by the API we are testing
+  }
+  // Sample User Agents from John
+    // Fennec: Mozilla/5.0 (Android; Mobile; rv: 40.0) Gecko/40.0 Firefox/40.0
+    // Firefox: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:40.0) Gecko/20100101 Firefox/40.0
+    // FXOS: Mozilla/5.0 (Mobile; rv:40.0) Gecko/40.0 Firefox/40.0
   var requestWith = null;
   var requestWithout = null;
   var attemptsWith = 0;
@@ -34,6 +42,9 @@ window.addEventListener('DOMContentLoaded', function() {
   var progressBar = document.getElementById('progress');
   var atmWithout = document.getElementById('attemptsWithout');
   var atmWith = document.getElementById('attemptsWith');
+  var sucWithout = document.getElementById('successesWithout');
+  var sucWith = document.getElementById('successesWith');
+  var netStatus = document.getElementById('netStatus');
 
   var fxosutest = document.getElementById('fxosutest');
   fxosutest.addEventListener('click', function(e) {
@@ -113,9 +124,12 @@ window.addEventListener('DOMContentLoaded', function() {
   // Currently runs in waves of 5 secs on, 5 secs off
   function getInterrupt() {
     var num = (new Date()).getTime() % 10000;
+
     if (num > 5000) {
+      netStatus.innerHTML = "Unstable";
       return true;
     } else {
+      netStatus.innerHTML = "Stable";
       return false;
     }
   }
@@ -128,6 +142,9 @@ window.addEventListener('DOMContentLoaded', function() {
     // Update table
     atmWithout.innerHTML = 0;
     atmWith.innerHTML = 0;
+    sucWithout.innerHTML = 0;
+    sucWith.innerHTML = 0;
+    netStatus.innerHTML = "Unknown";
     progressBar.setAttributeNS(null, 'width', '0%');
 
     switch (benchmarkLevel.value) {
@@ -204,8 +221,6 @@ window.addEventListener('DOMContentLoaded', function() {
   // TODO: Implement with Web Workers? Multi-threaded :)
   function sendRequestWith() {
     while (1) {
-      document.getElementById('debug1').innerHTML = "Level: " + level;
-      document.getElementById('debug2').innerHTML = attemptsWith + ": " + navigator.mozFxOSUService.mozIsNowGood(level);
       if (navigator.mozFxOSUService.mozIsNowGood(level)) {
         attemptsWith += 1;
 
@@ -244,9 +259,9 @@ window.addEventListener('DOMContentLoaded', function() {
   function onRequestError(func) {
 
     if (func === sendRequestWithout) {
-      showError(requestWithout.error);
+      showError(requestWithout.responseURL);
     } else if (func === sendRequestWith) {
-      showError(requestWith.error);
+      showError(requestWith.responseURL);
     }
 
   }
@@ -275,6 +290,7 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log("Without: Response #" + attemptsWithout + " ERROR of come kind");
       } else { // If success, let next request happen
         successesWithout += 1;
+        sucWithout.innerHTML = successesWithout;
         console.log("Without: Response #" + attemptsWithout + " SUCCEEDED");
         if (successesWithout < nWithout) {
           sendRequestWithout();
@@ -296,6 +312,7 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log("With: Response #" + attemptsWith + " ERROR of come kind");
       } else { // If success, let next request happen
         successesWith += 1;
+        sucWith.innerHTML = successesWith;
         console.log("With: Response #" + attemptsWith + " SUCCEEDED");
         if (successesWith < nWith) {
           sendRequestWith();
