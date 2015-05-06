@@ -21,6 +21,7 @@ window.addEventListener('DOMContentLoaded', function() {
   var urlSuccess = 'https://api.imgur.com/'; //example.com has no CORS support
   var urlFail = 'www.test-cors.org/fail'; // Returns a 404, which gets logged as a failure by the API we are testing
   if (navigator.userAgent.indexOf("(Mobile") > -1) { // If this is on FXOS device
+    urlSuccess = 'http://www.example.com'; // Returns a 404, which gets logged as a failure by the API we are testing
     urlFail = 'http://www.test-cors.org/fail'; // Returns a 404, which gets logged as a failure by the API we are testing
   }
   // Sample User Agents from John
