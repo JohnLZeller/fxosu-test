@@ -259,18 +259,16 @@ window.addEventListener('DOMContentLoaded', function() {
       memUsageWith.base = navigator.mozFxOSUService.memoryManager().resident;
       memUsageWith.max = memUsageWith.base;
     }
-    var fenI = 0;
+    var s = (new Date()).getTime();
     var goNogo = navigator.mozFxOSUService.mozIsNowGood(level);
+    // If on Fennec, use timeout - hacky fix for cross-platform compatibility
+    if (navigator.userAgent.indexOf("(Android; Mobile")) {
+      goNogo = true;
+    }
 
     while (1) {
       // TODO: Use Timeouts instead of while loop - infinite whiles are a no no in this js
-      // If on Fennec, use timeout
-      if (navigator.userAgent.indexOf("(Android; Mobile") > -1) {
-        fenI += 1;
-        if (fenI > 1000) {
-          goNogo = true;
-        }
-      }
+      // TODO: Find out why test sticks when reaching this while loop on Fennec
 
       if (goNogo) {
         attemptsWith += 1;
