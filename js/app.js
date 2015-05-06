@@ -259,9 +259,20 @@ window.addEventListener('DOMContentLoaded', function() {
       memUsageWith.base = navigator.mozFxOSUService.memoryManager().resident;
       memUsageWith.max = memUsageWith.base;
     }
+    var fenI = 0;
+    var goNogo = navigator.mozFxOSUService.mozIsNowGood(level);
 
     while (1) {
-      if (navigator.mozFxOSUService.mozIsNowGood(level)) {
+      // TODO: Use Timeouts instead of while loop - infinite whiles are a no no in this js
+      // If on Fennec, use timeout
+      if (navigator.userAgent.indexOf("(Android; Mobile") > -1) {
+        fenI += 1;
+        if (fenI > 1000) {
+          goNogo = true;
+        }
+      }
+
+      if (goNogo) {
         attemptsWith += 1;
         latStart = (new Date()).getTime(); // A single global works because requests don't happen concurrently
 
