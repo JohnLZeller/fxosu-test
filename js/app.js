@@ -322,6 +322,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
     if (func === sendRequestWithout) {
       contentLen = requestWithout.getResponseHeader("Content-Length");
+      contentLen = (isNaN(contentLen)) ? 0 : contentLen;
       statusCode = requestWithout.status;
       clearTimeout(timeoutWithout);
       dataWithout += parseInt(contentLen);
@@ -356,6 +357,7 @@ window.addEventListener('DOMContentLoaded', function() {
       }
     } else if (func === sendRequestWith) {
       contentLen = requestWith.getResponseHeader("Content-Length");
+      contentLen = (isNaN(contentLen)) ? 0 : contentLen;
       statusCode = requestWith.status;
       clearTimeout(timeoutWith);
       dataWith += parseInt(contentLen);
@@ -456,6 +458,10 @@ window.addEventListener('DOMContentLoaded', function() {
 
 
   function bytesToString(bytes) {
+    if (isNaN(bytes)) {
+      return "0b";
+    }
+
     var kb = bytes / 1000;
     var mb = bytes / 1000000;
     var gb = bytes / 1000000000;
