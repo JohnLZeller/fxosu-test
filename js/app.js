@@ -43,10 +43,11 @@ window.addEventListener('DOMContentLoaded', function() {
   var dataWithout = 0;
   var batUsageWith = {base: 0, diff: 0};
   var batUsageWithout = {base: 0, diff: 0};
-  var memUsageWith = {base: 0, diff: 0};
-  var memUsageWithout = {base: 0, diff: 0};
-  var latUsageWith = {base: 0, diff: 0};
-  var latUsageWithout = {base: 0, diff: 0};
+  var memUsageWith = {base: 0, diff: 0, max: 0};
+  var memUsageWithout = {base: 0, diff: 0, max: 0};
+  var latUsageWith = {avg: 0, levels: []};
+  var latUsageWithout = {avg: 0, levels: []};
+  var latStart = null;
   var startTime = 0;
 
   var nTimeout = 1000;
@@ -216,7 +217,13 @@ window.addEventListener('DOMContentLoaded', function() {
 
 
   function sendRequestWithout() {
+    if (attemptsWithout === 0) {
+      batUsageWithout.base = navigator.mozFxOSUService.batteryLevel();
+      memUsageWithout.base = navigator.mozFxOSUService.memoryManager().resident;
+      memUsageWithout.max = memUsageWithout.base;
+    }
     attemptsWithout += 1;
+    latStart = (new Date()).getTime(); // A single global works because requests don't happen concurrently
 
     // mozSystem option required to prevent CORS errors (Cross Origin Resource Sharing)
     requestWithout = new XMLHttpRequest({ mozSystem: true });
@@ -247,9 +254,16 @@ window.addEventListener('DOMContentLoaded', function() {
 
 
   function sendRequestWith() {
+    if (attemptsWith === 0) {
+      batUsageWith.base = navigator.mozFxOSUService.batteryLevel();
+      memUsageWith.base = navigator.mozFxOSUService.memoryManager().resident;
+      memUsageWith.max = memUsageWith.base;
+    }
+
     while (1) {
       if (navigator.mozFxOSUService.mozIsNowGood(level)) {
         attemptsWith += 1;
+        latStart = (new Date()).getTime(); // A single global works because requests don't happen concurrently
 
         // mozSystem option required to prevent CORS errors (Cross Origin Resource Sharing)
         requestWith = new XMLHttpRequest({ mozSystem: true });
@@ -312,6 +326,14 @@ window.addEventListener('DOMContentLoaded', function() {
       clearTimeout(timeoutWithout);
       dataWithout += parseInt(contentLen);
 
+      // Check levels
+      var tempMem = navigator.mozFxOSUService.memoryManager();
+      if (tempMem.resident > memUsageWithout.max) {
+        memUsageWithout.max = tempMem.resident;
+        memUsageWithout.diff = memUsageWithout.max - memUsageWithout.base;
+      }
+      latUsageWithout.levels.push((new Date()).getTime() - latStart);
+
       // Check status of reply
       if (statusCode !== 200) { // If fail, retry
         //console.log("Without: Response #" + attemptsWithout + " FAILED with " + statusCode);
@@ -338,6 +360,14 @@ window.addEventListener('DOMContentLoaded', function() {
       clearTimeout(timeoutWith);
       dataWith += parseInt(contentLen);
 
+      // Check levels
+      var tempMem = navigator.mozFxOSUService.memoryManager();
+      if (tempMem.resident > memUsageWith.max) {
+        memUsageWith.max = tempMem.resident;
+        memUsageWith.diff = memUsageWith.max - memUsageWith.base;
+      }
+      latUsageWith.levels.push((new Date()).getTime() - latStart);
+
       // Check status of reply
       if (statusCode !== 200) { // If fail, retry
         //console.log("With: Response #" + attemptsWith + " FAILED with " + statusCode);
@@ -362,14 +392,25 @@ window.addEventListener('DOMContentLoaded', function() {
   function setWithoutData() {
     rateWithout.innerHTML = ((n / attemptsWithout) * 100).toFixed(2) + "% (" + 
                                                       n + "/" + attemptsWithout + ")";
-    dWithout.innerHTML = dataWithout;
+    dWithout.innerHTML = bytesToString(dataWithout);
+    batUsageWithout.diff = batUsageWithout.base - navigator.mozFxOSUService.batteryLevel();
+    batWithout.innerHTML = batUsageWithout.diff + "%";
+    memWithout.innerHTML = bytesToString(memUsageWithout.diff);
+    latUsageWithout.avg = avg(latUsageWithout.levels);
+    latWithout.innerHTML = latUsageWithout.avg + "ms";
   }
 
 
   function setWithData() {
     rateWith.innerHTML = ((n / attemptsWith) * 100).toFixed(2) + "% (" + 
                                                       n + "/" + attemptsWith + ")";
-    dWith.innerHTML = dataWith;
+    dWith.innerHTML = bytesToString(dataWith);
+    batUsageWith.diff = batUsageWith.base - navigator.mozFxOSUService.batteryLevel();
+    batWith.innerHTML = batUsageWith.diff + "%";
+    memWith.innerHTML = bytesToString(memUsageWith.diff);
+    latUsageWith.avg = avg(latUsageWith.levels);
+    latWith.innerHTML = latUsageWith.avg + "ms";
+
     highlightWinners();
   }
 
@@ -406,12 +447,40 @@ window.addEventListener('DOMContentLoaded', function() {
     }
 
     // Latency
-    if (latUsageWithout.diff > latUsageWith.diff) {
+    if (latUsageWithout.avg > latUsageWith.avg) {
       latWith.style.color = "green";
-    } else if (latUsageWithout.diff < latUsageWith.diff) {
+    } else if (latUsageWithout.avg < latUsageWith.avg) {
       latWithout.style.color = "green";
     }
   }
+
+
+  function bytesToString(bytes) {
+    var kb = bytes / 1000;
+    var mb = bytes / 1000000;
+    var gb = bytes / 1000000000;
+
+    if (gb > 1) { // gb
+      return gb.toFixed(2) + "gb";
+    } else if (mb > 1) { //mb
+      return mb.toFixed(2) + "mb";
+    } else if (kb > 1) { // kb
+      return kb.toFixed(2) + "kb";
+    } else {
+      return bytes + "b";
+    }
+  }
+
+
+  function avg(arr) {
+    var sum = 0;
+    for (var i = 0; i < arr.length; i++) {
+      sum += arr[i];
+    }
+
+    return (sum / arr.length).toFixed(0);
+  }
+
 
   function resetLabels() {
     progressBar.setAttributeNS(null, 'width', '0%');
@@ -431,6 +500,22 @@ window.addEventListener('DOMContentLoaded', function() {
     dWith.innerHTML = "";
     latWithout.innerHTML = "";
     latWith.innerHTML = "";
+
+    // Reset colors
+    rateWithout.style.color = "black";
+    rateWith.style.color = "black";
+    atmWithout.style.color = "black";
+    atmWith.style.color = "black";
+    sucWithout.style.color = "black";
+    sucWith.style.color = "black";
+    batWithout.style.color = "black";
+    batWith.style.color = "black";
+    memWithout.style.color = "black";
+    memWith.style.color = "black";
+    dWithout.style.color = "black";
+    dWith.style.color = "black";
+    latWithout.style.color = "black";
+    latWith.style.color = "black";
   }
 
 
@@ -448,12 +533,14 @@ window.addEventListener('DOMContentLoaded', function() {
     batUsageWithout.diff = 0;
     memUsageWith.base = 0;
     memUsageWith.diff = 0;
+    memUsageWith.max = 0;
     memUsageWithout.base = 0;
     memUsageWithout.diff = 0;
-    latUsageWith.base = 0;
-    latUsageWith.diff = 0;
-    latUsageWithout.base = 0;
-    latUsageWithout.diff = 0;
+    memUsageWithout.max = 0;
+    latUsageWith.avg = 0;
+    latUsageWith.levels = [];
+    latUsageWithout.avg = 0;
+    latUsageWithout.levels = [];
   }
 
 
