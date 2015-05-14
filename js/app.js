@@ -328,7 +328,7 @@ window.addEventListener('DOMContentLoaded', function() {
     atmWithout.innerHTML = attemptsWithout;
     atmWith.innerHTML = attemptsWith;
     var pro = ((successesWithout + successesWith) / (n * 2)) * 100;
-    progressBar.setAttributeNS(null, 'value', pro.toString());
+    progressBar.setAttributeNS(null, 'value', pro);
 
     if (func === sendRequestWithout) {
       contentLen = requestWithout.getResponseHeader("Content-Length");
@@ -410,6 +410,9 @@ window.addEventListener('DOMContentLoaded', function() {
     memWithout.innerHTML = bytesToString(memUsageWithout.diff);
     latUsageWithout.avg = avg(latUsageWithout.levels);
     latWithout.innerHTML = latUsageWithout.avg + "ms";
+
+    var pro = ((successesWithout + successesWith) / (n * 2)) * 100;
+    progressBar.setAttributeNS(null, 'value', pro);
   }
 
 
@@ -424,6 +427,9 @@ window.addEventListener('DOMContentLoaded', function() {
     latWith.innerHTML = latUsageWith.avg + "ms";
 
     highlightWinners();
+    
+    var pro = ((successesWithout + successesWith) / (n * 2)) * 100;
+    progressBar.setAttributeNS(null, 'value', pro);
   }
 
 
