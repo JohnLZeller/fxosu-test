@@ -1,6 +1,6 @@
 html, body {
   margin: 0;
-  padding: 0.5rem;
+  padding: 0;
 }
 
 body {
@@ -16,12 +16,19 @@ h2 {
   font-size: 1.25rem;
 }
 
-form {
-  display: flex;
-}
-
 input, button, code, p {
   font-size: inherit;
+}
+
+#benchmark, #fxosuservice {
+  margin-top: 1rem;
+  padding: 1rem;
+  display: none;
+}
+
+#description  {
+  margin-top: 1rem;
+  padding: 1rem;
 }
 
 #error {
@@ -45,71 +52,4 @@ input, button, code, p {
   border-bottom: 1rem solid #ccc;
   margin-top: -3rem;
   content: '';
-}
-
-/* Tab Content - menucool.com */
-
-ul.tabs
-{
-    padding: 7px 0;
-    font-size: 0;
-    margin:0;
-    list-style-type: none;
-    text-align: left; /*set to left, center, or right to align the tabs as desired*/
-}
-        
-ul.tabs li
-{
-    display: inline;
-    margin: 0;
-    margin-right:3px; /*distance between tabs*/
-}
-        
-ul.tabs li a
-{
-    font: normal 12px Verdana;
-    text-decoration: none;
-    position: relative;
-    padding: 7px 16px;
-    border: 1px solid #CCC;
-    border-bottom-color:#B7B7B7;
-    color: #000;
-    background: #F0F0F0 url(img/tabbg.gif) 0 0 repeat-x;
-    border-radius: 3px 3px 0 0;
-    outline:none;
-}
-        
-ul.tabs li a:visited
-{
-    color: #000;
-}
-        
-ul.tabs li a:hover
-{
-    border: 1px solid #B7B7B7;
-    background:#F0F0F0 url(img/tabbg.gif) 0 -36px repeat-x;
-}
-        
-ul.tabs li.selected a, ul.tabs li.selected a:hover
-{
-    position: relative;
-    top: 0px;
-    font-weight:bold;
-    background: white;
-    border: 1px solid #B7B7B7;
-    border-bottom-color: white;
-}
-        
-        
-ul.tabs li.selected a:hover
-{
-    text-decoration: none;
-}
-     
-
-div.tabcontents
-{
-    border: 1px solid #B7B7B7; padding: 30px;
-    background-color:#FFF;
-    border-radius: 0 3px 3px 3px;
 }

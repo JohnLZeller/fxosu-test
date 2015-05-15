@@ -327,8 +327,6 @@ window.addEventListener('DOMContentLoaded', function() {
     // Update table
     atmWithout.innerHTML = attemptsWithout;
     atmWith.innerHTML = attemptsWith;
-    var pro = ((successesWithout + successesWith) / (n * 2)) * 100;
-    progressBar.setAttributeNS(null, 'width', pro.toString() + '%');
 
     if (func === sendRequestWithout) {
       contentLen = requestWithout.getResponseHeader("Content-Length");
@@ -398,6 +396,9 @@ window.addEventListener('DOMContentLoaded', function() {
         }
       }
     }
+    
+    var pro = ((successesWithout + successesWith) / (n * 2)) * 100;
+    progressBar.setAttributeNS(null, 'value', pro);
   }
 
 
@@ -499,7 +500,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
 
   function resetLabels() {
-    progressBar.setAttributeNS(null, 'width', '0%');
+    progressBar.setAttributeNS(null, 'value', '0');
     netStatus.innerHTML = "Unknown";
     intStatus.innerHTML = "";
     rateWithout.innerHTML = "";
